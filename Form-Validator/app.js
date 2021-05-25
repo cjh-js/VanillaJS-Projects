@@ -1,61 +1,74 @@
 const form = document.querySelector('.formjs');
-const name = document.querySelector('#name');
+const name = document.querySelector('#username');
 const email = document.querySelector('#email');
 const password = document.querySelector('#password');
-const confirm = document.querySelector('#confirm');
-const nameErr = document.querySelector('.nameErr');
-const emailErr = document.querySelector('.emailErr');
-const pwErr = document.querySelector('.pwErr');
-const confirmErr = document.querySelector('.confirmErr');
+const password2 = document.querySelector('#password2');
 
-function checkPW(password, password2){
-    if(password.value.trim().length < 6){
-        pwErr.innerText = 'Password must be at least 6 characters';
-        password.style.border = '3px solid red';
-    } else {
-        pwErr.innerText = '';
-        password.style.border = '3px solid blue';
-    }
-    if(password2.value.trim() !== password.value.trim()){
-        confirmErr.innerText = 'Passwords do not match';
-        password2.style.border = '3px solid red';
-    } else if(password2.value.trim() === password.value.trim() && password2.value.trim() !== '') {
-        confirmErr.innerText = '';
-        password2.style.border = '3px solid blue';
-    } else {
-        confirmErr.innerText = 'Passwords are required';
-        password2.style.border = '3px solid red';
+// Common Functions
+function getUpperName(input){
+    return input.id.charAt(0).toUpperCase() + input.id.slice(1);
+}
+
+function getDiv(input){
+    return input.parentNode;
+}
+
+// Show Error || Success
+
+function showErr(input, msg){
+    getDiv(input).className = 'error';
+    const errorMsg = getDiv(input).querySelector('small');
+    errorMsg.innerText = msg;
+}
+
+function showSuc(input){
+    getDiv(input).className = 'success';
+}
+
+// Check Functions
+
+function checkRequired(inputs){
+    inputs.forEach((input) => {
+       if(input.value.trim() === ''){
+           showErr(input, `${getUpperName(input)} is required.`);
+       }
+    });
+}
+
+function checkLength(input, min, max){
+    if(input.value.length < min){
+        showErr(input, `${getUpperName(input)} must be more than ${min} characters.`);
+    } else if(input.value.length > max){
+        showErr(input, `${getUpperName(input)} must be less than ${max} characters.`)
+    } else{
+        showSuc(input);
     }
 }
 
-function checkEmail(email){
-    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email.value)){
-        email.style.border = `3px solid blue`;
-        emailErr.innerText = ``;
+function checkMail(input){
+    const mail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(mail.test(input.value.trim())){
+        showSuc(input);
     } else {
-        emailErr.innerText = 'Email is not valid';
-        email.style.border = `3px solid red`;
+        showErr(input, `${getUpperName(input)} is not valid.`);
     }
 }
 
-function checkName(name){
-    if(name.value.trim() === '' || name.value.length < 3){
-        nameErr.innerText = 'Username must be at least 3 characters';
-        name.style.border = `3px solid red`;
+function checkPW(pw1, pw2){
+    if(pw1.value !== pw2.value){
+        showErr(pw2, `Password does not match`);
     } else {
-        name.style.border = `3px solid blue`;
-        nameErr.innerText = ``;
+        showSuc(pw2);
     }
 }
 
-function handleSubmit(e){
+// Event Listener
+form.addEventListener('submit', (e) => {
     e.preventDefault();
-    checkName(name);
-    checkEmail(email);
-    checkPW(password, confirm);
-}
 
-function init(){
-    form.addEventListener('submit', handleSubmit);
-}
-init();
+    checkRequired([name, email, password, password2]);
+    checkLength(name, 3, 15);
+    checkLength(password, 6, 20);
+    checkMail(email);
+    checkPW(password, password2);
+});

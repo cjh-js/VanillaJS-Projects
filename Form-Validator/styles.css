@@ -56,6 +56,11 @@ label {
   color: #cccccc;
 }
 
+.formjs div input:focus {
+  outline: 0;
+  border-color: black;
+}
+
 .formjs input[type="submit"] {
   height: 40px;
   background-color: rgb(52, 152, 219);
@@ -70,4 +75,19 @@ label {
 
 div small {
   color: red;
+}
+
+div.success input {
+  border-color: blue;
+}
+
+div.error input {
+  border: 3px solid red;
+}
+
+div.success small {
+  visibility: hidden;
+}
+div.error small {
+  visibility: visible;
 }
