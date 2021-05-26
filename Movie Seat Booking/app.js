@@ -24,8 +24,6 @@ function updateCountPrice(){
 
     seatNum.innerText = seatCount;
     money.innerText = seatCount * ticket;
-
-    setMovieData(select.selectedIndex, select.value);
 }
 
 // Load Data
